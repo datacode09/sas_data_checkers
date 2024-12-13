@@ -15,13 +15,11 @@
     %end;
 
     /* Step 2: Generate a timestamp for the filename */
-    %let timestamp = %sysfunc(datetime(), datetime20.);
-    %let timestamp = %sysfunc(compress(&timestamp, ' :-', 'kd')); /* Remove special characters */
-
+    %let timestamp = %sysfunc(putn(%sysfunc(datetime()), datetime20.), yymmddn8.)%sysfunc(putn(%sysfunc(datetime()), time8.), hhmmss6.);
+    
     /* Step 3: Initialize output dataset for storing duplicate statistics */
     data duplicate_stats;
-        length Dataset $32 Record_Count 8 Duplicate_Count 8 Timestamp $20;
-        format Timestamp $20.;
+        length Dataset $32 Record_Count 8 Duplicate_Count 8;
     run;
 
     /* Step 4: Loop through each dataset and calculate duplicates */
@@ -56,7 +54,6 @@
             Dataset = "&dataset";
             Record_Count = &record_count;
             Duplicate_Count = &dup_count;
-            Timestamp = %sysfunc(datetime(), datetime20.);
             output;
         run;
 
